@@ -3,6 +3,11 @@
 
 ## API 명세서
 
+## 공통 Validation 조건
+- 유저명 조건: 2자 이상 20자 이하, 한글/영문/공백 허용, 특수문자 불가
+- 이메일 조건: '@' 뒤에 도메인이 포함되어야 함 (예: .com, .net, .co.kr 등)
+- 비밀번호 조건: 8자 이상, 숫자/영어/특수문자 허용
+
 ### 1) 일정 생성 API
 - URL: POST /schedules
 
@@ -187,7 +192,7 @@ UpdateScheduleResponse
 
 ### Response 예시
 ```json
-(없음) 
+(없음)
 ```
 ### 상황별 코드
 `204 No Content`: 일정 삭제 성공
@@ -242,7 +247,7 @@ CreateUserResponse
 ### 상황별 코드
 - `201 Created`: 회원가입 성공
 - `400 Bad Request`
-    - INVALID_USERNAME: 틀린 유저명
+    - INVALID_USERNAME: 유저명 조건 미충족
     - INVALID_EMAIL_FORMAT: 이메일 형식 오류
     - PASSWORD_NOT_MET: 비밀번호 조건 미충족
 - `409 Conflict`
@@ -368,7 +373,7 @@ UpdateUserResponse
 ### 상황별 코드
 `200 OK`: 정보 수정 성공
 - `400 Bad Request`
-    - INVALID_USERNAME: 틀린 유저명
+    - INVALID_USERNAME: 유저명 조건 미충족
     - PASSWORD_NOT_MET: 비밀번호 조건 미충족
 
 ### 설명
@@ -383,7 +388,7 @@ UpdateUserResponse
 
 ### Response 예시
 ```json
-(없음) 
+(없음)
 ```
 ### 상황별 코드
 `204 No Content`: 유저 삭제 성공
