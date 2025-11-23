@@ -1,0 +1,47 @@
+package com.example.schedulemanagementdevelop.user.controller;
+
+import com.example.schedulemanagementdevelop.user.dto.UserRequest;
+import com.example.schedulemanagementdevelop.user.dto.UserResponse;
+import com.example.schedulemanagementdevelop.user.service.UserService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequiredArgsConstructor
+public class UserController {
+
+    private final UserService userService;
+
+    @PostMapping("/users")
+    public ResponseEntity<UserResponse> createUser(@RequestBody UserRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.save(request));
+    }
+
+    @GetMapping("/users/{userId}")
+    public ResponseEntity<UserResponse> getUser(@PathVariable Long userId) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.getOne(userId));
+    }
+
+    @GetMapping("/users")
+    public ResponseEntity<List<UserResponse>> getUsers() {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.getAll());
+    }
+
+    @PutMapping("/users/{userId}")
+    public ResponseEntity<UserResponse> updateUser(
+            @PathVariable Long userId,
+            @RequestBody UserRequest request
+    ) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.update(userId, request));
+    }
+
+    @DeleteMapping("/users/{userId}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long userId) {
+        userService.delete(userId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+}
