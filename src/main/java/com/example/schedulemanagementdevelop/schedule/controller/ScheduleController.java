@@ -16,22 +16,24 @@ public class ScheduleController {
 
     private final ScheduleService scheduleService;
 
-    @PostMapping("/schedules")
-    public ResponseEntity<ScheduleResponse> saveSchedule(@RequestBody ScheduleRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(scheduleService.save(request));
+    @PostMapping("/users/{userId}/schedules")
+    public ResponseEntity<ScheduleResponse> saveSchedule(
+            @PathVariable Long userId,
+            @RequestBody ScheduleRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(scheduleService.save(userId, request));
     }
 
-    @GetMapping("/schedules/{scheduleId}")
+    @GetMapping("/users/{userId}/schedules/{scheduleId}")
     public ResponseEntity<ScheduleResponse> getSchedule(@PathVariable Long scheduleId) {
         return ResponseEntity.status(HttpStatus.OK).body(scheduleService.getOne(scheduleId));
     }
 
-    @GetMapping("/schedules")
-    public ResponseEntity<List<ScheduleResponse>> getSchedules() {
-        return ResponseEntity.status(HttpStatus.OK).body(scheduleService.getAll());
+    @GetMapping("/users/{userId}/schedules")
+    public ResponseEntity<List<ScheduleResponse>> getSchedules(@PathVariable Long userId) {
+        return ResponseEntity.status(HttpStatus.OK).body(scheduleService.getAll(userId));
     }
 
-    @PutMapping("/schedules/{scheduleId}")
+    @PutMapping("/users/{userId}/schedules/{scheduleId}")
     public ResponseEntity<ScheduleResponse> updateSchedule(
             @PathVariable Long scheduleId,
             @RequestBody ScheduleRequest request
@@ -39,7 +41,7 @@ public class ScheduleController {
         return ResponseEntity.status(HttpStatus.OK).body(scheduleService.update(scheduleId, request));
     }
 
-    @DeleteMapping("/schedules/{scheduleId}")
+    @DeleteMapping("/users/{userId}/schedules/{scheduleId}")
     public ResponseEntity<Void> deleteSchedule(@PathVariable Long scheduleId) {
         scheduleService.delete(scheduleId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

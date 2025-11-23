@@ -8,15 +8,15 @@ import java.time.LocalDateTime;
 public class ScheduleResponse {
 
     private final Long id;
-    private final String nickname;
+    private final Long userId;
     private final String title;
     private final String contents;
     private final LocalDateTime createdAt;
     private final LocalDateTime modifiedAt;
 
-    public ScheduleResponse(Long id, String nickname, String title, String contents, LocalDateTime createdAt, LocalDateTime modifiedAt) {
+    public ScheduleResponse(Long id, Long userId, String title, String contents, LocalDateTime createdAt, LocalDateTime modifiedAt) {
         this.id = id;
-        this.nickname = nickname;
+        this.userId = userId;
         this.title = title;
         this.contents = contents;
         this.createdAt = createdAt;
