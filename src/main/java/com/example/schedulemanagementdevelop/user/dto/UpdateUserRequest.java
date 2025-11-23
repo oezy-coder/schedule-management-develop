@@ -3,9 +3,8 @@ package com.example.schedulemanagementdevelop.user.dto;
 import lombok.Getter;
 
 @Getter
-public class UserRequest {
+public class UpdateUserRequest {
 
     private String userName;
-    private String email;
     private String password;
 }

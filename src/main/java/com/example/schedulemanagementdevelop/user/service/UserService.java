@@ -1,5 +1,6 @@
 package com.example.schedulemanagementdevelop.user.service;
 
+import com.example.schedulemanagementdevelop.user.dto.UpdateUserRequest;
 import com.example.schedulemanagementdevelop.user.dto.UserRequest;
 import com.example.schedulemanagementdevelop.user.dto.UserResponse;
 import com.example.schedulemanagementdevelop.user.entity.User;
@@ -21,7 +22,8 @@ public class UserService {
     public UserResponse save(UserRequest request) {
         User user = new User(
                 request.getUserName(),
-                request.getEmail()
+                request.getEmail(),
+                request.getPassword()
         );
         User savedUser = userRepository.save(user);
         return new UserResponse(
@@ -64,10 +66,13 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponse update(Long userId, UserRequest request) {
+    public UserResponse update(Long userId, UpdateUserRequest request) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new IllegalStateException("없는 유저입니다."));
-        user.update(request.getUserName());
+        user.update(
+                request.getUserName(),
+                request.getPassword()
+        );
         return new UserResponse(
                 user.getId(),
                 user.getUserName(),

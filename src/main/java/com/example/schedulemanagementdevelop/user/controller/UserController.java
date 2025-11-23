@@ -1,5 +1,6 @@
 package com.example.schedulemanagementdevelop.user.controller;
 
+import com.example.schedulemanagementdevelop.user.dto.UpdateUserRequest;
 import com.example.schedulemanagementdevelop.user.dto.UserRequest;
 import com.example.schedulemanagementdevelop.user.dto.UserResponse;
 import com.example.schedulemanagementdevelop.user.service.UserService;
@@ -34,7 +35,7 @@ public class UserController {
     @PutMapping("/users/{userId}")
     public ResponseEntity<UserResponse> updateUser(
             @PathVariable Long userId,
-            @RequestBody UserRequest request
+            @RequestBody UpdateUserRequest request
     ) {
         return ResponseEntity.status(HttpStatus.OK).body(userService.update(userId, request));
     }
