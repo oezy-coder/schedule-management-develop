@@ -20,6 +20,7 @@ public class Schedule extends BaseEntity {
     @Column(nullable = false)
     private String contents;
 
+    // 유저와의 연관관계 설정 (N:1)
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
