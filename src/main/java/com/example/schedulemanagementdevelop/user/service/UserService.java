@@ -1,11 +1,14 @@
 package com.example.schedulemanagementdevelop.user.service;
 
+import com.example.schedulemanagementdevelop.exception.CustomException;
+import com.example.schedulemanagementdevelop.exception.ErrorCode;
 import com.example.schedulemanagementdevelop.user.dto.UpdateUserRequest;
 import com.example.schedulemanagementdevelop.user.dto.UserRequest;
 import com.example.schedulemanagementdevelop.user.dto.UserResponse;
 import com.example.schedulemanagementdevelop.user.entity.User;
 import com.example.schedulemanagementdevelop.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +21,7 @@ public class UserService {
 
     private final UserRepository userRepository;
 
+    // 회원 가입
     @Transactional
     public UserResponse save(UserRequest request) {
         User user = new User(
@@ -25,6 +29,9 @@ public class UserService {
                 request.getEmail(),
                 request.getPassword()
         );
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new CustomException(ErrorCode.EMAIL_DUPLICATE);
+        }
         User savedUser = userRepository.save(user);
         return new UserResponse(
                 savedUser.getId(),
@@ -35,10 +42,11 @@ public class UserService {
         );
     }
 
+    // 유저 단건 조회
     @Transactional(readOnly = true)
     public UserResponse getOne(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new IllegalStateException("없는 유저입니다."));
+                () -> new CustomException(ErrorCode.USER_NOT_FOUND));
         return new UserResponse(
                 user.getId(),
                 user.getUserName(),
@@ -48,6 +56,7 @@ public class UserService {
         );
     }
 
+    // 전체 유저 조회
     @Transactional(readOnly = true)
     public List<UserResponse> getAll() {
         List<User> users = userRepository.findAll();
@@ -65,14 +74,32 @@ public class UserService {
         return dtos;
     }
 
+    // 유저 정보 수정 (유저명, 비밀번호는 선택적으로 변경 가능)
     @Transactional
-    public UserResponse update(Long userId, UpdateUserRequest request) {
+    public UserResponse updateUser(Long userId, UpdateUserRequest request) {
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new IllegalStateException("없는 유저입니다."));
-        user.update(
-                request.getUserName(),
-                request.getPassword()
-        );
+                () -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        // 유저명 변경: null이면 변경 없음, 공백이면 예외 발생
+        String newUserName = request.getUserName();
+        if (newUserName != null) {
+            newUserName = newUserName.trim();
+            if (newUserName.isBlank()) {
+                throw new CustomException(ErrorCode.INVALID_USERNAME);
+            }
+            user.modifyUserName(newUserName);
+        }
+
+        // 비밀번호 변경: null이면 변경 없음, 공백이면 예외 발생
+        String newPassword = request.getPassword();
+        if (newPassword != null) {
+            newPassword = newPassword.trim();
+            if (newPassword.isBlank()) {
+                throw new CustomException(ErrorCode.INVALID_PASSWORD); // 새 비밀번호가 null이 아닌데 빈 문자열일 경우 ErrorCode 응답
+            }
+            user.modifyPassword(newPassword);
+        }
+
         return new UserResponse(
                 user.getId(),
                 user.getUserName(),
@@ -82,12 +109,13 @@ public class UserService {
         );
     }
 
+    // 유저 삭제
     @Transactional
     public void delete(Long userId) {
-        boolean existence = userRepository.existsById(userId);
-        if (!existence) {
-            throw new IllegalStateException("없는 유저입니다.");
+        try {
+            userRepository.deleteById(userId);
+        } catch (EmptyResultDataAccessException e) {
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
-        userRepository.deleteById(userId);
     }
 }
