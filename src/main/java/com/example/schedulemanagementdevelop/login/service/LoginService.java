@@ -2,6 +2,8 @@ package com.example.schedulemanagementdevelop.login.service;
 
 import com.example.schedulemanagementdevelop.login.dto.LoginRequest;
 import com.example.schedulemanagementdevelop.login.dto.LoginResponse;
+import com.example.schedulemanagementdevelop.exception.CustomException;
+import com.example.schedulemanagementdevelop.exception.ErrorCode;
 import com.example.schedulemanagementdevelop.user.entity.User;
 import com.example.schedulemanagementdevelop.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,12 +17,17 @@ public class LoginService {
 
     private final UserRepository userRepository;
 
+    // 로그인 기능 (세션 기반)
     @Transactional
     public LoginResponse login(LoginRequest request, HttpServletRequest httpRequest) {
-        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(
-                () -> new IllegalStateException("없는 이메일 입니다."));
-        if (!user.getPassword().equals(request.getPassword())) {
-            throw new IllegalStateException("비밀번호가 일치하지 않습니다.");
+
+        String email = request.getEmail().trim();
+        String password = request.getPassword().trim();
+
+        User user = userRepository.findByEmail(email).orElseThrow(
+                () -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        if (!user.getPassword().equals(password)) {
+            throw new CustomException(ErrorCode.PASSWORD_MISMATCH);
         }
         httpRequest.getSession(true).setAttribute("userId", user.getId());
         return new LoginResponse(
