@@ -1,5 +1,7 @@
 package com.example.schedulemanagementdevelop.schedule.service;
 
+import com.example.schedulemanagementdevelop.exception.CustomException;
+import com.example.schedulemanagementdevelop.exception.ErrorCode;
 import com.example.schedulemanagementdevelop.schedule.dto.ScheduleRequest;
 import com.example.schedulemanagementdevelop.schedule.dto.ScheduleResponse;
 import com.example.schedulemanagementdevelop.schedule.entity.Schedule;
@@ -7,6 +9,7 @@ import com.example.schedulemanagementdevelop.schedule.repository.ScheduleReposit
 import com.example.schedulemanagementdevelop.user.entity.User;
 import com.example.schedulemanagementdevelop.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,10 +23,11 @@ public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final UserRepository userRepository;
 
+    // 일정 생성
     @Transactional
     public ScheduleResponse save(Long userId, ScheduleRequest request) {
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new IllegalStateException("없는 유저입니다."));
+                () -> new CustomException(ErrorCode.USER_NOT_FOUND));
         Schedule schedule = new Schedule(
                 request.getTitle(),
                 request.getContents(),
@@ -40,10 +44,11 @@ public class ScheduleService {
         );
     }
 
+    // 일정 단건 조회
     @Transactional(readOnly = true)
     public ScheduleResponse getOne(Long scheduleId) {
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
-                () -> new IllegalStateException("없는 일정입니다."));
+                () -> new CustomException(ErrorCode.SCHEDULE_NOT_FOUND));
         return new ScheduleResponse(
                 schedule.getId(),
                 schedule.getUser().getId(),
@@ -54,10 +59,11 @@ public class ScheduleService {
         );
     }
 
+    // 전체 일정 조회
     @Transactional(readOnly = true)
     public List<ScheduleResponse> getAll(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new IllegalStateException("없는 유저입니다."));
+                () -> new CustomException(ErrorCode.USER_NOT_FOUND));
         List<Schedule> schedules = scheduleRepository.findByUser(user);
         List<ScheduleResponse> dtos = new ArrayList<>();
         for (Schedule schedule : schedules) {
@@ -74,10 +80,11 @@ public class ScheduleService {
         return dtos;
     }
 
+    // 일정 수정
     @Transactional
-    public ScheduleResponse update(Long scheduleId, ScheduleRequest request) {
+    public ScheduleResponse updateSchedule(Long scheduleId, ScheduleRequest request) {
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
-                () -> new IllegalStateException("없는 일정입니다."));
+                () -> new CustomException(ErrorCode.SCHEDULE_NOT_FOUND));
         schedule.update(
                 request.getTitle(),
                 request.getContents());
@@ -91,12 +98,13 @@ public class ScheduleService {
         );
     }
 
+    // 일정 삭제
     @Transactional
     public void delete(Long scheduleId) {
-        boolean existence = scheduleRepository.existsById(scheduleId);
-        if (!existence) {
-            throw new IllegalStateException("없는 일정입니다.");
+        try {
+            scheduleRepository.deleteById(scheduleId);
+        } catch (EmptyResultDataAccessException e) {
+            throw new CustomException(ErrorCode.SCHEDULE_NOT_FOUND);
         }
-        scheduleRepository.deleteById(scheduleId);
     }
 }
