@@ -26,10 +26,13 @@ public class LoginService {
 
         User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
         if (!user.getPassword().equals(password)) {
             throw new CustomException(ErrorCode.PASSWORD_MISMATCH);
         }
+
         httpRequest.getSession(true).setAttribute("userId", user.getId());
+
         return new LoginResponse(
                 user.getId(),
                 user.getEmail(),

@@ -10,7 +10,8 @@ public enum ErrorCode {
     PASSWORD_MISMATCH(HttpStatus.UNAUTHORIZED, "UNAUTHORIZED", "비밀번호가 일치하지 않습니다."),
     EMAIL_DUPLICATE(HttpStatus.CONFLICT, "CONFLICT", "이미 가입된 이메일입니다."),
     USER_NOT_FOUND(HttpStatus.UNAUTHORIZED, "UNAUTHORIZED", "존재하지 않는 사용자입니다."),
-    SCHEDULE_NOT_FOUND(HttpStatus.NOT_FOUND, "NOT_FOUND", "존재하지 않는 일정입니다.");
+    SCHEDULE_NOT_FOUND(HttpStatus.NOT_FOUND, "NOT_FOUND", "존재하지 않는 일정입니다."),
+    INVALID_INPUT(HttpStatus.BAD_REQUEST, HttpStatus.BAD_REQUEST.toString(), "제목, 내용 중 하나는 채워주세요.");
 
     private final HttpStatus httpStatus;
     private final String code;

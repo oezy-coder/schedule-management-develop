@@ -24,6 +24,8 @@ public class LoginController {
            @Valid @RequestBody LoginRequest request,
             HttpServletRequest httpRequest
     ) {
-        return ResponseEntity.status(HttpStatus.OK).body(loginService.login(request, httpRequest));
+        final LoginResponse response = loginService.login(request, httpRequest);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }

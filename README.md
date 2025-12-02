@@ -101,6 +101,7 @@ ScheduleResponse
 
 ### 설명
 - 제목과 내용을 입력받아 새로운 일정을 생성합니다.
+---
 
 ### 2) 일정 조회 API
 - URL: GET /users/{userId}/schedules/{scheduleId}
@@ -139,6 +140,7 @@ ScheduleResponse
 
 ### 설명
 - 일정을 단건 조회합니다.
+---
 
 ### 3) 일정 전체 조회 API
 - URL: GET /users/{userId}/schedules

@@ -1,5 +1,6 @@
 package com.example.schedulemanagementdevelop.schedule.entity;
 
+import com.example.schedulemanagementdevelop.global.BaseEntity;
 import com.example.schedulemanagementdevelop.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -32,8 +33,13 @@ public class Schedule extends BaseEntity {
     }
 
     public void update(String title, String contents) {
-        this.title = title;
-        this.contents = contents;
+        if (title != null) {
+            this.title = title;
+        }
+
+        if (contents != null) {
+            this.contents = contents;
+        }
     }
 }
 
