@@ -9,5 +9,5 @@ import java.util.List;
 public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
 
     // 특정 유저가 작성한 일정 목록 조회
-    List<Schedule> findByUser(User user);
+    List<Schedule> findAllByUser(User user);
 }
